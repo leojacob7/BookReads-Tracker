@@ -20,13 +20,11 @@ export default class BooksApp extends React.Component {
   }
 
   bookSectionChange = (book, value, isNewBook = false) => {
-    console.log("booksection", value);
     if(isNewBook) {
       book.shelf = value;
       this.setState((currentState) => ({
         books: [...currentState.books, book],
       }))
-      debugger;
       return;
     }
     this.setState((currentState) => ({
@@ -38,7 +36,7 @@ export default class BooksApp extends React.Component {
         else return b;
       } ),
     }))
-    // BooksAPI.update( book, value ) 
+    BooksAPI.update( book, value ) 
   }
 
   onBookStatusChange = () => {
