@@ -25,6 +25,7 @@ export default class BooksApp extends React.Component {
       this.setState((currentState) => ({
         books: [...currentState.books, book],
       }))
+      BooksAPI.update( book, value )
       return;
     }
     this.setState((currentState) => ({
