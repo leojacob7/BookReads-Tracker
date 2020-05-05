@@ -8,7 +8,7 @@ class SearchBook extends Component {
 
   static propTypes = {
     onBookSectionChange: PropTypes.func,
-  }``
+  }
 
   state={
     query: '',
