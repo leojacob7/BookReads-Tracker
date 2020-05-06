@@ -12,23 +12,48 @@ class SearchBook extends Component {
 
   state={
     query: '',
+    value: 'none',
+    books: [],
   }
 
   searchBook = query => {
+    const { booksOnShelf } = this.props;
     query !== '' && BooksAPI.search(query)
       .then((books) => {  
-        
-        this.setState(() => ({
-          books
+        const newBooks = books && !books.error && books.map(book => {
+          book.shelf = "none";
+          booksOnShelf.forEach(bookOnShelf => {
+            if (book.id === bookOnShelf.id) {
+              book.shelf = bookOnShelf.shelf;
+            }
+          });
+          return book;
+        });
+        if (!newBooks){
+          this.setState( { books } )
+        }
+
+        newBooks && this.setState(() => ({
+          books: newBooks
         }))
       })
+    if( query === '' ) this.setState(() => ({ books: [],}))
   }
+
+  handleSelect = (book, value) => {
+    const { onBookSectionChange } = this.props;
+    this.setState({value: value,});
+    onBookSectionChange( book, value)
+}
 
   onInputChange = (value) => { this.setState({ query: value }); this.searchBook(value) }
 
+  renderNoResults = () => (
+    <div className="search-books-input-wrapper">Sorry No Books Found. Please try a different book</div>
+  )
+
   renderBooks = (book) =>
   { 
-      const { onBookSectionChange } = this.props;
       if( !book ) return null;
       return (
           <li>
@@ -36,7 +61,7 @@ class SearchBook extends Component {
               <div className="book-top">
                   <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url( ${ book.imageLinks && book.imageLinks.thumbnail } )` }}></div>
                   <div className="book-shelf-changer">
-                  <select onClick={ (event) => onBookSectionChange( book, event.target.value) }>
+                  <select value={ book.shelf!== 'none' ? book.shelf : this.state.value } onChange={ (event) => this.handleSelect( book, event.target.value ) }>
                       <option value="move" disabled>Move to...</option>
                       <option value="currentlyReading">Currently Reading</option>
                       <option value="wantToRead">Want to Read</option>
@@ -46,15 +71,12 @@ class SearchBook extends Component {
                   </div>
               </div>
                   <div className="book-title">{ book.title && book.title }</div>
-                  <div className="book-authors">{ book.authors && book.authors[ 0 ] }</div>
+                  <div className="book-authors">{ book.authors && book.authors.toString() }</div>
               </div>
           </li>
       );
   }
 
-  renderNoResults = () => (
-    <div className="search-books-input-wrapper">Sorry No Books Found. Please try a different book</div>
-  )
 
 
   render() {

@@ -8,17 +8,26 @@ class ReadsContainer extends Component {
         books: PropTypes.array,
       }
 
+      state= {
+          value: 'move',
+      }
+
+    handleSelect = (book, value) => {
+        const { onBookSectionChange } = this.props;
+        this.setState({value: value,});
+        onBookSectionChange( book, value)
+    }
+
     renderBooks = (book) =>
     { 
-        const { onBookSectionChange } = this.props;
         if( !book ) return null;
         return (
             <li>
                 <div className="book">
                 <div className="book-top">
-                    <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url( ${ book.imageLinks.thumbnail } )` }}></div>
+                    <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url( ${ book.imageLinks && book.imageLinks.thumbnail } )` }}></div>
                     <div className="book-shelf-changer">
-                    <select onChange={ (event) => onBookSectionChange( book, event.target.value) }>
+                    <select value={ this.state.value } onChange={ (event) => this.handleSelect( book, event.target.value ) }>
                         <option value="move" disabled>Move to...</option>
                         <option value="currentlyReading">Currently Reading</option>
                         <option value="wantToRead">Want to Read</option>
@@ -28,7 +37,7 @@ class ReadsContainer extends Component {
                     </div>
                 </div>
                     <div className="book-title">{ book && book.title }</div>
-                    <div className="book-authors">{ book && book.authors[ 0 ] }</div>
+                    <div className="book-authors">{ book && book.authors.toString() }</div>
                 </div>
             </li>
         );

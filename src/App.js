@@ -40,10 +40,6 @@ export default class BooksApp extends React.Component {
     BooksAPI.update( book, value ) 
   }
 
-  onBookStatusChange = () => {
-
-  }
-
   renderListContainer = () => (
     <div className="list-books">
     <div className="list-books-title">
@@ -64,8 +60,8 @@ export default class BooksApp extends React.Component {
 
   renderSearchBook = () => {
     return (
-      <SearchBook 
-        bookStatusChange={ ( query ) => this.onBookStatusChange( query ) }
+      <SearchBook
+        booksOnShelf={ this.state.books }
         onBookSectionChange={ (book, value) => this.bookSectionChange( book, value, true ) }
       />
     );
