@@ -2,12 +2,19 @@ import React, { Component } from 'react';
 import '../App.css'
 import * as BooksAPI from '../BooksAPI'
 import { Link } from 'react-router-dom';
+import { debounce } from 'throttle-debounce';
 import PropTypes from 'prop-types';
 
 class SearchBook extends Component {
 
   static propTypes = {
+    booksOnShelf: PropTypes.array,
     onBookSectionChange: PropTypes.func,
+  }
+
+  constructor() {
+    super();
+    this.searchBook = debounce(500, this.searchBook);
   }
 
   state={
@@ -17,7 +24,8 @@ class SearchBook extends Component {
   }
 
   searchBook = query => {
-    const { booksOnShelf } = this.props;
+    const { booksOnShelf = [] } = this.props;
+
     query !== '' && BooksAPI.search(query)
       .then((books) => {  
         const newBooks = books && !books.error && books.map(book => {
@@ -56,7 +64,7 @@ class SearchBook extends Component {
   { 
       if( !book ) return null;
       return (
-          <li>
+          <li key={ book.id }>
               <div className="book">
               <div className="book-top">
                   <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url( ${ book.imageLinks && book.imageLinks.thumbnail } )` }}></div>
